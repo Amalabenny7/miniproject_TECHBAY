@@ -26,6 +26,73 @@ router.get("/", verifySignedIn, function (req, res, next) {
 });
 
 
+///////ALL category/////////////////////                                         
+router.get("/all-categories", verifySignedIn, function (req, res) {
+  let administator = req.session.admin;
+  adminHelper.getAllcategories().then((categories) => {
+    res.render("admin/category/all-categories", { admin: true, layout: "admin", categories, administator });
+  });
+});
+
+///////ADD category/////////////////////                                         
+router.get("/add-category", verifySignedIn, function (req, res) {
+  let administator = req.session.admin;
+  res.render("admin/category/add-category", { admin: true, layout: "admin", administator });
+});
+
+///////ADD category/////////////////////                                         
+router.post("/add-category", function (req, res) {
+  adminHelper.addcategory(req.body, (id) => {
+    let image = req.files.Image;
+    image.mv("./public/images/category-images/" + id + ".png", (err, done) => {
+      if (!err) {
+        res.redirect("/admin/all-categories");
+      } else {
+        console.log(err);
+      }
+    });
+  });
+});
+
+///////EDIT category/////////////////////                                         
+router.get("/edit-category/:id", verifySignedIn, async function (req, res) {
+  let administator = req.session.admin;
+  let categoryId = req.params.id;
+  let category = await adminHelper.getcategoryDetails(categoryId);
+  console.log(category);
+  res.render("admin/category/edit-category", { admin: true, layout: "admin", category, administator });
+});
+
+///////EDIT category/////////////////////                                         
+router.post("/edit-category/:id", verifySignedIn, function (req, res) {
+  let categoryId = req.params.id;
+  adminHelper.updatecategory(categoryId, req.body).then(() => {
+    if (req.files) {
+      let image = req.files.Image;
+      if (image) {
+        image.mv("./public/images/category-images/" + categoryId + ".png");
+      }
+    }
+    res.redirect("/admin/category/all-categories");
+  });
+});
+
+///////DELETE category/////////////////////                                         
+router.get("/delete-category/:id", verifySignedIn, function (req, res) {
+  let categoryId = req.params.id;
+  adminHelper.deletecategory(categoryId).then((response) => {
+    fs.unlinkSync("./public/images/category-images/" + categoryId + ".png");
+    res.redirect("/admin/all-categories");
+  });
+});
+
+///////DELETE ALL category/////////////////////                                         
+router.get("/delete-all-categories", verifySignedIn, function (req, res) {
+  adminHelper.deleteAllcategories().then(() => {
+    res.redirect("/admin/category/all-categories");
+  });
+});
+
 
 // GET route to display the change password form for admin
 router.get('/change-password/:id', verifySignedIn, async (req, res) => {

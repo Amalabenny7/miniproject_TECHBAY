@@ -5,6 +5,97 @@ const objectId = require("mongodb").ObjectID;
 
 module.exports = {
 
+  ///////ADD category/////////////////////                                         
+  addcategory: (category, callback) => {
+    console.log(category);
+    category.Price = parseInt(category.Price);
+    db.get()
+      .collection(collections.CATEGORY_COLLECTION)
+      .insertOne(category)
+      .then((data) => {
+        console.log(data);
+        callback(data.ops[0]._id);
+      });
+  },
+
+  ///////GET ALL category/////////////////////                                            
+  getAllcategories: () => {
+    return new Promise(async (resolve, reject) => {
+      let categories = await db
+        .get()
+        .collection(collections.CATEGORY_COLLECTION)
+        .find()
+        .toArray();
+      resolve(categories);
+    });
+  },
+
+  ///////ADD category DETAILS/////////////////////                                            
+  getcategoryDetails: (categoryId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.CATEGORY_COLLECTION)
+        .findOne({
+          _id: objectId(categoryId)
+        })
+        .then((response) => {
+          resolve(response);
+        });
+    });
+  },
+
+  ///////DELETE category/////////////////////                                            
+  deletecategory: (categoryId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.CATEGORY_COLLECTION)
+        .removeOne({
+          _id: objectId(categoryId)
+        })
+        .then((response) => {
+          console.log(response);
+          resolve(response);
+        });
+    });
+  },
+
+  ///////UPDATE category/////////////////////                                            
+  updatecategory: (categoryId, categoryDetails) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.CATEGORY_COLLECTION)
+        .updateOne(
+          {
+            _id: objectId(categoryId)
+          },
+          {
+            $set: {
+              Name: categoryDetails.Name,
+              Category: categoryDetails.Category,
+              Price: categoryDetails.Price,
+              Description: categoryDetails.Description,
+            },
+          }
+        )
+        .then((response) => {
+          resolve();
+        });
+    });
+  },
+
+
+  ///////DELETE ALL category/////////////////////                                            
+  deleteAllcategories: () => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.CATEGORY_COLLECTION)
+        .remove({})
+        .then(() => {
+          resolve();
+        });
+    });
+  },
+
   ///////ADD staff/////////////////////                                         
   addstaff: (staff, callback) => {
     console.log(staff);
