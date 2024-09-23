@@ -1,0 +1,110 @@
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>Manage Inventory</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                <li class="breadcrumb-item">Inventory</li>
+                <li class="breadcrumb-item active">All-Inventories</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="card-title">All Inventories</h5>
+                            <a href="/admin/add-inventory" class="btn btn-dark">+ Add New Inventory</a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Product Category</th>
+                                        <th>Product Name</th>
+                                        <th>Company Name</th>
+                                        <th>Manage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each inventories}}
+                                    <tr>
+                                        <td>{{incremented @index}}</td>
+                                        <td>{{this.pcategory}}</td>
+                                        <td>{{this.pname}}</td>
+                                        <td>{{this.cname}}</td>
+
+                                        <td>
+
+                                            <a href="/admin/delete-inventory/{{this._id}}"
+                                                class="btn btn-danger btn-sm">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </td>
+
+
+                        </div>
+                        </td>
+                        </tr>
+                        {{/each}}
+                        </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        </div>
+    </section>
+
+</main><!-- End #main -->
+
+<script>
+    async function handleApproval(staffId, staffName, phoneNumber) {
+        // First, send an approval request to the server
+        try {
+            const response = await fetch(`/admin/approve-staff/${staffId}`, {
+                method: 'POST',
+            });
+
+            if (response.ok) {
+                // If approval is successful, redirect to WhatsApp with a pre-filled message
+                const message = `Hi ${staffName}, your request has been approved by the admin. You can now log in to your dashboard`;
+                const waLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+                window.location.href = waLink;
+            } else {
+                alert('Error approving the staff.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    async function handleRejection(staffId, staffName, phoneNumber) {
+        // First, send a rejection request to the server
+        try {
+            const response = await fetch(`/admin/reject-staff/${staffId}`, {
+                method: 'POST',
+            });
+
+            if (response.ok) {
+                // If rejection is successful, redirect to WhatsApp with a pre-filled message
+                const message = `Hi ${staffName}, your request has been rejected by the admin. Please contact support for more details.`;
+                const waLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+                window.location.href = waLink;
+            } else {
+                alert('Error rejecting the staff.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+</script>

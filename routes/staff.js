@@ -2,6 +2,8 @@ var express = require("express");
 var staffHelper = require("../helper/staffHelper");
 var fs = require("fs");
 const userHelper = require("../helper/userHelper");
+const adminHelper = require("../helper/adminHelper");
+
 var router = express.Router();
 var db = require("../config/connection");
 var collections = require("../config/collections");
@@ -21,6 +23,93 @@ const verifySignedIn = (req, res, next) => {
 router.get("/", verifySignedIn, function (req, res, next) {
   let staff = req.session.staff;
   res.render("staff/home", { staff: true, layout: "admin", staff });
+});
+
+
+///////ALL product/////////////////////                                         
+router.get("/all-products", verifySignedIn, function (req, res) {
+  let staff = req.session.staff;
+  staffHelper.getAllProducts().then((products) => {
+    res.render("staff/products/all-products", { staff: true, layout: "admin", products, staff });
+  });
+});
+
+router.get("/add-product", verifySignedIn, async function (req, res) {
+  let staff = req.session.staff;
+  let inventories = await adminHelper.getAllinventories();
+  res.render("staff/products/add-product", { staff: true, layout: "admin", inventories, staff });
+});
+
+router.post("/add-product", async function (req, res) {
+  const { inventory, pprice, per, qty } = req.body;
+
+  try {
+    let selectedInventory = await adminHelper.getInventoryById(inventory);
+
+    if (selectedInventory.qty >= parseInt(qty)) {
+      const updatedQty = selectedInventory.qty - parseInt(qty);
+      await adminHelper.updateInventoryQty(inventory, updatedQty);
+
+      staffHelper.addProduct(req.body, (id) => {
+        res.json({ success: true, message: "Product added successfully!" });
+      });
+    } else {
+      res.status(400).json({ success: false, message: "Not enough stock in inventory." });
+    }
+  } catch (error) {
+    console.error("Error adding product or updating inventory:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+});
+
+
+
+router.get("/edit-product/:id", verifySignedIn, async function (req, res) {
+  let staff = req.session.staff;
+  let productId = req.params.id;
+  let product = await staffHelper.getProductDetails(productId);
+  console.log(product);
+  res.render("staff/edit-product", { staff: true, layout: "admin", product, workspace });
+});
+
+router.post("/edit-product/:id", verifySignedIn, function (req, res) {
+  let productId = req.params.id;
+  staffHelper.updateProduct(productId, req.body).then(() => {
+    if (req.files) {
+      let image = req.files.Image;
+      if (image) {
+        image.mv("./public/images/product-images/" + productId + ".png");
+      }
+    }
+    res.redirect("/staff/all-products");
+  });
+});
+
+router.get("/delete-product/:id", verifySignedIn, function (req, res) {
+  let productId = req.params.id;
+  staffHelper.deleteProduct(productId).then((response) => {
+    res.redirect("/staff/products/all-products");
+  });
+});
+
+router.get("/delete-all-products", verifySignedIn, function (req, res) {
+  staffHelper.deleteAllProducts().then(() => {
+    res.redirect("/staff/all-products");
+  });
+});
+
+// Route to get inventory details by ID
+router.get("/get-inventory/:id", (req, res) => {
+  const inventoryId = req.params.id;
+
+  adminHelper.getInventoryById(inventoryId)
+    .then((inventory) => {
+      res.json(inventory); // Send inventory details as JSON
+    })
+    .catch((error) => {
+      console.error("Error fetching inventory:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    });
 });
 
 
@@ -95,80 +184,6 @@ router.get("/profile", async function (req, res, next) {
 //   });
 // });
 
-///////ADD workspace/////////////////////                                         
-router.get("/add-workspace", verifySignedIn, function (req, res) {
-  let staff = req.session.staff;
-  res.render("staff/add-workspace", { admin: true, layout: "admin", staff });
-});
-
-///////ADD workspace/////////////////////                                         
-router.post("/add-workspace", function (req, res) {
-  // Ensure the staff is signed in and their ID is available
-  if (req.session.signedInStaff && req.session.staff && req.session.staff._id) {
-    const staffId = req.session.staff._id; // Get the staff's ID from the session
-
-    // Pass the staffId to the addworkspace function
-    staffHelper.addworkspace(req.body, staffId, (workspaceId, error) => {
-      if (error) {
-        console.log("Error adding workspace:", error);
-        res.status(500).send("Failed to add workspace");
-      } else {
-        let image = req.files.Image;
-        image.mv("./public/images/workspace-images/" + workspaceId + ".png", (err) => {
-          if (!err) {
-            res.redirect("/staff/all-workspaces");
-          } else {
-            console.log("Error saving workspace image:", err);
-            res.status(500).send("Failed to save workspace image");
-          }
-        });
-      }
-    });
-  } else {
-    // If the staff is not signed in, redirect to the sign-in page
-    res.redirect("/staff/signin");
-  }
-});
-
-
-///////EDIT workspace/////////////////////                                         
-router.get("/edit-workspace/:id", verifySignedIn, async function (req, res) {
-  let staff = req.session.staff;
-  let workspaceId = req.params.id;
-  let workspace = await staffHelper.getworkspaceDetails(workspaceId);
-  console.log(workspace);
-  res.render("staff/edit-workspace", { admin: true, layout: "admin", workspace, staff });
-});
-
-///////EDIT workspace/////////////////////                                         
-router.post("/edit-workspace/:id", verifySignedIn, function (req, res) {
-  let workspaceId = req.params.id;
-  staffHelper.updateworkspace(workspaceId, req.body).then(() => {
-    if (req.files) {
-      let image = req.files.Image;
-      if (image) {
-        image.mv("./public/images/workspace-images/" + workspaceId + ".png");
-      }
-    }
-    res.redirect("/staff/all-workspaces");
-  });
-});
-
-///////DELETE workspace/////////////////////                                         
-router.get("/delete-workspace/:id", verifySignedIn, function (req, res) {
-  let workspaceId = req.params.id;
-  staffHelper.deleteworkspace(workspaceId).then((response) => {
-    fs.unlinkSync("./public/images/workspace-images/" + workspaceId + ".png");
-    res.redirect("/staff/all-workspaces");
-  });
-});
-
-///////DELETE ALL workspace/////////////////////                                         
-router.get("/delete-all-workspaces", verifySignedIn, function (req, res) {
-  staffHelper.deleteAllworkspaces().then(() => {
-    res.redirect("/staff/all-workspaces");
-  });
-});
 
 
 router.get("/all-users", verifySignedIn, function (req, res) {
@@ -326,58 +341,7 @@ router.get("/signout", function (req, res) {
   res.redirect("/staff");
 });
 
-router.get("/add-product", verifySignedIn, function (req, res) {
-  let staff = req.session.staff;
-  res.render("staff/add-product", { staff: true, layout: "admin", workspace });
-});
 
-router.post("/add-product", function (req, res) {
-  staffHelper.addProduct(req.body, (id) => {
-    let image = req.files.Image;
-    image.mv("./public/images/product-images/" + id + ".png", (err, done) => {
-      if (!err) {
-        res.redirect("/staff/add-product");
-      } else {
-        console.log(err);
-      }
-    });
-  });
-});
-
-router.get("/edit-product/:id", verifySignedIn, async function (req, res) {
-  let staff = req.session.staff;
-  let productId = req.params.id;
-  let product = await staffHelper.getProductDetails(productId);
-  console.log(product);
-  res.render("staff/edit-product", { staff: true, layout: "admin", product, workspace });
-});
-
-router.post("/edit-product/:id", verifySignedIn, function (req, res) {
-  let productId = req.params.id;
-  staffHelper.updateProduct(productId, req.body).then(() => {
-    if (req.files) {
-      let image = req.files.Image;
-      if (image) {
-        image.mv("./public/images/product-images/" + productId + ".png");
-      }
-    }
-    res.redirect("/staff/all-products");
-  });
-});
-
-router.get("/delete-product/:id", verifySignedIn, function (req, res) {
-  let productId = req.params.id;
-  staffHelper.deleteProduct(productId).then((response) => {
-    fs.unlinkSync("./public/images/product-images/" + productId + ".png");
-    res.redirect("/staff/all-products");
-  });
-});
-
-router.get("/delete-all-products", verifySignedIn, function (req, res) {
-  staffHelper.deleteAllProducts().then(() => {
-    res.redirect("/staff/all-products");
-  });
-});
 
 router.get("/all-users", verifySignedIn, function (req, res) {
   let staff = req.session.staff;

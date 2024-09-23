@@ -5,6 +5,130 @@ const objectId = require("mongodb").ObjectID;
 
 module.exports = {
 
+
+  ///////ADD inventory/////////////////////                                         
+  addinventory: (inventory, callback) => {
+    console.log(inventory);
+    inventory.Price = parseInt(inventory.Price);
+    db.get()
+      .collection(collections.INVENTORY_COLLECTION)
+      .insertOne(inventory)
+      .then((data) => {
+        console.log(data);
+        callback(data.ops[0]._id);
+      });
+  },
+
+  ///////GET ALL inventory/////////////////////                                            
+  getAllinventories: () => {
+    return new Promise(async (resolve, reject) => {
+      let inventories = await db
+        .get()
+        .collection(collections.INVENTORY_COLLECTION)
+        .find()
+        .toArray();
+      resolve(inventories);
+    });
+  },
+
+  getInventoryById: (inventoryId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.INVENTORY_COLLECTION)
+        .findOne({ _id: objectId(inventoryId) })
+        .then((inventory) => {
+          resolve(inventory);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  },
+
+  // Update inventory quantity
+  updateInventoryQty: (inventoryId, updatedQty) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.INVENTORY_COLLECTION)
+        .updateOne(
+          { _id: objectId(inventoryId) },
+          { $set: { qty: updatedQty } }
+        )
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  },
+  ///////ADD inventory DETAILS/////////////////////                                            
+  getinventoryDetails: (inventoryId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.INVENTORY_COLLECTION)
+        .findOne({
+          _id: objectId(inventoryId)
+        })
+        .then((response) => {
+          resolve(response);
+        });
+    });
+  },
+
+  ///////DELETE inventory/////////////////////                                            
+  deleteinventory: (inventoryId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.INVENTORY_COLLECTION)
+        .removeOne({
+          _id: objectId(inventoryId)
+        })
+        .then((response) => {
+          console.log(response);
+          resolve(response);
+        });
+    });
+  },
+
+  ///////UPDATE inventory/////////////////////                                            
+  updateinventory: (inventoryId, inventoryDetails) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.INVENTORY_COLLECTION)
+        .updateOne(
+          {
+            _id: objectId(inventoryId)
+          },
+          {
+            $set: {
+              Name: inventoryDetails.Name,
+              Category: inventoryDetails.Category,
+              Price: inventoryDetails.Price,
+              Description: inventoryDetails.Description,
+            },
+          }
+        )
+        .then((response) => {
+          resolve();
+        });
+    });
+  },
+
+
+  ///////DELETE ALL inventory/////////////////////                                            
+  deleteAllinventories: () => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.INVENTORY_COLLECTION)
+        .remove({})
+        .then(() => {
+          resolve();
+        });
+    });
+  },
+
+
   ///////ADD category/////////////////////                                         
   addcategory: (category, callback) => {
     console.log(category);

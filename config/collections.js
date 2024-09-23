@@ -6,6 +6,8 @@ module.exports = {
     ORDER_COLLECTION: 'order',
     STAFF_COLLECTION: 'staff',
     CATEGORY_COLLECTION: "category",
+    INVENTORY_COLLECTION: "inventory",
+
 
 
 }

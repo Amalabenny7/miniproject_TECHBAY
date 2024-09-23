@@ -25,6 +25,67 @@ router.get("/", verifySignedIn, function (req, res, next) {
   });
 });
 
+///////ALL inventory/////////////////////                                         
+router.get("/all-inventories", verifySignedIn, function (req, res) {
+  let administator = req.session.admin;
+  adminHelper.getAllinventories().then((inventories) => {
+    res.render("admin/inventory/all-inventories", { admin: true, layout: "admin", inventories, administator });
+  });
+});
+
+///////ADD inventory/////////////////////                                         
+router.get("/add-inventory", verifySignedIn, async function (req, res) {
+  let administator = req.session.admin;
+  let categories = await adminHelper.getAllcategories();
+  res.render("admin/inventory/add-inventory", { admin: true, layout: "admin", categories, administator });
+});
+
+///////ADD inventory/////////////////////                                         
+router.post("/add-inventory", function (req, res) {
+  adminHelper.addinventory(req.body, (id) => {
+    res.redirect("/admin/inventory/all-inventories");
+  });
+});
+
+///////EDIT inventory/////////////////////                                         
+router.get("/edit-inventory/:id", verifySignedIn, async function (req, res) {
+  let administator = req.session.admin;
+  let inventoryId = req.params.id;
+  let inventory = await adminHelper.getinventoryDetails(inventoryId);
+  console.log(inventory);
+  res.render("admin/inventory/edit-inventory", { admin: true, layout: "admin", inventory, administator });
+});
+
+///////EDIT inventory/////////////////////                                         
+router.post("/edit-inventory/:id", verifySignedIn, function (req, res) {
+  let inventoryId = req.params.id;
+  adminHelper.updateinventory(inventoryId, req.body).then(() => {
+    if (req.files) {
+      let image = req.files.Image;
+      if (image) {
+        image.mv("./public/images/inventory-images/" + inventoryId + ".png");
+      }
+    }
+    res.redirect("/admin/inventory/all-inventories");
+  });
+});
+
+///////DELETE inventory/////////////////////                                         
+router.get("/delete-inventory/:id", verifySignedIn, function (req, res) {
+  let inventoryId = req.params.id;
+  adminHelper.deleteinventory(inventoryId).then((response) => {
+    // fs.unlinkSync("./public/images/inventory-images/" + inventoryId + ".png");
+    res.redirect("/admin/inventory/all-inventories");
+  });
+});
+
+///////DELETE ALL inventory/////////////////////                                         
+router.get("/delete-all-inventories", verifySignedIn, function (req, res) {
+  adminHelper.deleteAllinventories().then(() => {
+    res.redirect("/admin/inventory/all-inventories");
+  });
+});
+
 
 ///////ALL category/////////////////////                                         
 router.get("/all-categories", verifySignedIn, function (req, res) {

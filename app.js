@@ -12,6 +12,8 @@ var fileUpload = require("express-fileupload");
 var db = require("./config/connection");
 var session = require("express-session");
 var app = express();
+const flash = require('connect-flash');
+
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -46,12 +48,24 @@ db.connect((err) => {
 app.use("/", usersRouter);
 app.use("/admin", adminRouter);
 app.use("/admin/staff", adminRouter);
+app.use("/admin/inventory", adminRouter);
 app.use("/staff", staffRouter);
+app.use("/staff/products", staffRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
 });
+
+app.use(flash());
+
+// Middleware to make flash messages available to templates
+app.use((req, res, next) => {
+  res.locals.errorMessage = req.flash('error');
+  next();
+});
+
 
 // error handler
 app.use(function (err, req, res, next) {
