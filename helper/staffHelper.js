@@ -9,13 +9,14 @@ module.exports = {
 
   addProduct: (product, callback) => {
     console.log(product);
-    product.Price = parseInt(product.Price);
+    // Ensure price is a valid number
+    product.Price = parseFloat(product.iprice); // Using parseFloat instead of parseInt
     db.get()
       .collection(collections.PRODUCTS_COLLECTION)
       .insertOne(product)
       .then((data) => {
         console.log(data);
-        callback(data.ops[0]._id);
+        callback(data.insertedId); // Use insertedId instead of data.ops[0]._id
       });
   },
 

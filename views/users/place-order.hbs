@@ -1,39 +1,70 @@
+<style>
+    .header {
+        --background-color: rgba(0, 0, 0, 0);
+        --default-color: #ffffff;
+        --heading-color: #ffffff;
+        color: var(--default-color);
+        background-color: black;
+        padding: 20px 0;
+        transition: all 0.5s;
+        z-index: 997;
+    }
+</style><br>
 <section>
     <div class="container mt-5">
-        <form id="checkout-form">
-            <div class="row">
-                <div class="col-md-6">
-                    <h2>Enter Shipping details</h2><br>
-                    <div>
-                        <label for="">Address</label>
+        <div class="card shadow p-4">
+            <form id="checkout-form">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h2>Enter Shipping details</h2><br>
+                        {{#if user}}
+                        <div>
+                            <label for="">Name</label>
+                            <input type="text" name="Name" id="address" value={{user.Name}} class="form-control mb-3">
 
-                        <input type="text" name="address" id="address" class="form-control">
-                        <label for="">Pincode</label>
-                        <input type="text" name="pincode" id="pincode" class="form-control">
-                        <label for="">Mobile number</label>
-                        <input type="text" name="mobile" id="mobile" class="form-control">
-                        <input type="text" name="userId" value="{{user._id}}" hidden>
+                            <label for="">Email</label>
+                            <input type="text" name="Email" id="address" value={{user.Email}} class="form-control mb-3">
+
+                            <label for="">Phone</label>
+                            <input type="text" name="Phone" id="address" value={{user.Phone}} class="form-control mb-3">
+
+                            <label for="">Address</label>
+                            <input type="text" name="Address" id="address" value={{user.Address}}
+                                class="form-control mb-3">
+
+                            <label for="">Pincode</label>
+                            <input type="text" name="Pincode" id="address" value={{user.Pincode}}
+                                class="form-control mb-3">
+
+                            <label for="">District</label>
+                            <input type="text" name="District" id="address" value={{user.District}}
+                                class="form-control mb-3">
+
+
+                            <input type="text" name="userId" value="{{user._id}}" hidden>
+                        </div>
+                        {{/if}}
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="container mt-5 ml-5 checkout">
-                        <h5 class="mt-4">Total amount: Rs. {{total}}</h5>
-                        <hr>
-                        <div class="payment">
-                            <p>Payment Method</p>
-                            <label class="radio-inline">
-                                <input type="radio" name="payment-method" value="COD" checked> COD
-                            </label>
-                            <label class="radio-inline mt-2">
-                                <input type="radio" name="payment-method" value="ONLINE"> Online payment
-                            </label>
-                            <button class="btn btn-primary float-right mt-4" type="submit">Checkout</button>
+                    <div class="col-md-4">
+                        <div class="container mt-5 ml-5 card p-4 shadow">
+                            <h5 class="mt-4">Total amount: Rs. {{total}}</h5>
+                            <hr>
+                            <div class="payment">
+                                <p>Payment Method</p>
+                                <label class="radio-inline">
+                                    <input type="radio" name="payment-method" value="COD" checked> Cash on delivery
+                                </label>
+                                <label class="radio-inline mt-2">
+                                    <input type="radio" name="payment-method" value="ONLINE"> Online payment
+                                </label>
+                                <button class="btn btn-primary float-right mt-4" type="submit">Checkout</button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-            </div>
-        </form>
+                </div>
+            </form>
+        </div>
     </div>
 </section>
 <style>
@@ -108,7 +139,7 @@
             success: (response) => {
                 if (response.status) {
                     location.href = '/order-placed'
-                } else{
+                } else {
                     alert("Payment failed")
                 }
             }

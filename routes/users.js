@@ -344,6 +344,21 @@ router.get("/add-to-cart/:id", function (req, res) {
   });
 });
 
+// router.get('/add-to-cart/:productId', (req, res) => {
+//   let productId = req.params.productId;
+//   let userId = req.session.userId; // Assume you're getting userId from session
+
+//   userHelper.addToCart(productId, userId)
+//     .then(() => {
+//       res.json({ status: true });
+//     })
+//     .catch((err) => {
+//       console.error('Add to cart error:', err); // Log the error
+//       res.status(500).json({ status: false, error: err.message });
+//     });
+// });
+
+
 router.post("/change-product-quantity", function (req, res) {
   console.log(req.body);
   userHelper.changeProductQuantity(req.body).then((response) => {

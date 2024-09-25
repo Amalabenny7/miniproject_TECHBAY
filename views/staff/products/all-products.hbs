@@ -27,6 +27,7 @@
                                     <tr>
                                         <th>No.</th>
                                         <th>Date</th>
+                                        <th>Image</th>
                                         <th>Product Name</th>
                                         <th> Category</th>
                                         <th> MRP</th>
@@ -41,6 +42,8 @@
                                     <tr>
                                         <td>{{incremented @index}}</td>
                                         <td>{{this.date}}</td>
+                                        <td><img src="/images/product-images/{{this._id}}.png" alt=""
+                                                style="width: 3rem"></td>
                                         <td>{{this.iname}}</td>
                                         <td>{{this.icategory}}</td>
                                         <td>{{this.iprice}}/-</td>

@@ -83,7 +83,34 @@
                                 </select>
 
                                 <label for="inputName5" class="form-label">Company Name</label>
-                                <input type="text" class="form-control" name="cname" id="inputName5" required>
+                                <input type="text" class="form-control mb-3" name="cname" id="inputName5" required>
+
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <label for="inputName5" class="form-label">Product Price</label>
+                                        <input type="text" class="form-control mb-3" name="pprice" id="inputName5"
+                                            required>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <label for="inputName5" class="form-label">Per</label>
+                                        <select class="form-select mb-3" name="pper" aria-label="Default select example"
+                                            required>
+                                            <option selected disabled>Per</option>
+                                            <option value="kg">Kg</option>
+                                            <option value="ltr">Ltr</option>
+                                            <option value="box">Box</option>
+                                            <option value="single">Single</option>
+
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <label for="inputName5" class="form-label">Stock</label>
+                                        <input type="number" class="form-control mb-3" name="qty" id="inputName5"
+                                            required>
+                                    </div>
+                                </div>
+
+
 
                                 {{!-- <label for="inputName5" class="form-label mt-3">Company Name</label>
                                 <input type="file" class="form-control" name="cname" id="inputName5" required> --}}

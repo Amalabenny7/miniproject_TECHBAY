@@ -15,6 +15,51 @@
 
   </section><!-- /Hero Section -->
 
+  <section id="elementsSearchList" class="team section light-background">
+
+    <!-- Section Title -->
+    <div class="container section-title" data-aos="fade-up">
+      <h2>Products</h2>
+      <p>Check Our Products</p>
+    </div><!-- End Section Title -->
+
+    <div class="container">
+
+      <div class="form-group mb-4 w-100">
+        <input class="form-control form-control-clicked" id="elementsSearchInput" type="text" onkeyup="elementsSearch()"
+          placeholder="Search Products...">
+      </div>
+
+      <div class="row g-3">
+        {{#each products}}
+        <div class="col-lg-3">
+          <div class="card p-4">
+            <div class="pic mb-4"><img src="/images/product-images/{{this._id}}.png" class="img-fluid" alt=""></div>
+            <div class="">
+              <h5>{{this.iname}} </h5>
+              <h6>{{this.iprice}}/- <strike class="text-danger">₹{{this.pprice}}</strike></h6>
+              <p class="">Available Stock : {{this.qty}}</p>
+              <button id="add-to-cart-{{this._id}}" onclick="addToCart('{{this._id}}')" class="btn btn-sm btn-dark">Add
+                to cart</button>
+
+            </div>
+          </div>
+        </div><!-- End Team Member -->
+        {{/each}}
+
+
+
+      </div>
+
+    </div>
+
+
+
+  </section><!-- /Team Section -->
+
+
+
+
   <!-- About Section -->
   <section id="about" class="about section">
 
@@ -821,12 +866,7 @@
             <div class="member-info">
               <h4>Walter White</h4>
               <span>Chief Executive Officer</span>
-              <div class="social">
-                <a href=""><i class="bi bi-twitter-x"></i></a>
-                <a href=""><i class="bi bi-facebook"></i></a>
-                <a href=""><i class="bi bi-instagram"></i></a>
-                <a href=""><i class="bi bi-linkedin"></i></a>
-              </div>
+
             </div>
           </div>
         </div><!-- End Team Member -->
@@ -837,12 +877,7 @@
             <div class="member-info">
               <h4>Sarah Jhonson</h4>
               <span>Product Manager</span>
-              <div class="social">
-                <a href=""><i class="bi bi-twitter-x"></i></a>
-                <a href=""><i class="bi bi-facebook"></i></a>
-                <a href=""><i class="bi bi-instagram"></i></a>
-                <a href=""><i class="bi bi-linkedin"></i></a>
-              </div>
+
             </div>
           </div>
         </div><!-- End Team Member -->
@@ -853,12 +888,7 @@
             <div class="member-info">
               <h4>William Anderson</h4>
               <span>CTO</span>
-              <div class="social">
-                <a href=""><i class="bi bi-twitter-x"></i></a>
-                <a href=""><i class="bi bi-facebook"></i></a>
-                <a href=""><i class="bi bi-instagram"></i></a>
-                <a href=""><i class="bi bi-linkedin"></i></a>
-              </div>
+
             </div>
           </div>
         </div><!-- End Team Member -->
@@ -1030,3 +1060,46 @@
 <!-- Scroll Top -->
 <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
     class="bi bi-arrow-up-short"></i></a>
+
+<script>
+  function addToCart(productId) {
+    $.ajax({
+      url: "/add-to-cart/" + productId,
+      method: "get",
+      success: (response) => {
+        if (response.status) {
+          // Update cart count
+          let count = $("#cart-count").html();
+          count = parseInt(count) + 1;
+          $("#cart-count").html(count);
+
+          // Change button text and style
+          let button = $("#add-to-cart-" + productId);
+          button.html("Added to cart ✅");
+          button.removeClass("btn-dark").addClass("btn-success");
+          button.prop("disabled", true); // Optional: Disable the button after adding to cart
+        }
+      },
+    });
+  }
+</script>
+
+<script>
+  function elementsSearch() {
+    var input = document.getElementById('elementsSearchInput');
+    var filter = input.value.toUpperCase();
+    var list = document.getElementById("elementsSearchList");
+    var listItem = list.getElementsByClassName('col-lg-3');
+
+    for (i = 0; i < listItem.length; i++) {
+      var a = listItem[i];
+      var textValue = a.textContent || a.innerText;
+      if (textValue.toUpperCase().indexOf(filter) > -1) {
+        listItem[i].style.display = "";
+      } else {
+        listItem[i].style.display = "none";
+      }
+    }
+  }
+
+</script>

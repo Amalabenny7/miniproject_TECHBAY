@@ -50,8 +50,23 @@ router.post("/add-product", async function (req, res) {
       const updatedQty = selectedInventory.qty - parseInt(qty);
       await adminHelper.updateInventoryQty(inventory, updatedQty);
 
+      // Adding the product first
       staffHelper.addProduct(req.body, (id) => {
-        res.json({ success: true, message: "Product added successfully!" });
+        if (req.files && req.files.Image) {
+          let image = req.files.Image;
+          // Save the image to the desired location
+          image.mv("./public/images/product-images/" + id + ".png", (err) => {
+            if (!err) {
+              res.json({ success: true, message: "Product added successfully with image!" });
+            } else {
+              console.error("Error saving image:", err);
+              res.status(500).json({ success: false, message: "Error saving image" });
+            }
+          });
+        } else {
+          // If no image was uploaded
+          res.json({ success: true, message: "Product added successfully but no image uploaded." });
+        }
       });
     } else {
       res.status(400).json({ success: false, message: "Not enough stock in inventory." });
@@ -61,7 +76,6 @@ router.post("/add-product", async function (req, res) {
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 });
-
 
 
 router.get("/edit-product/:id", verifySignedIn, async function (req, res) {
