@@ -102,10 +102,15 @@ module.exports = {
           },
           {
             $set: {
-              Name: inventoryDetails.Name,
-              Category: inventoryDetails.Category,
-              Price: inventoryDetails.Price,
-              Description: inventoryDetails.Description,
+              pname: inventoryDetails.pname,
+              pcategory: inventoryDetails.pcategory,
+              cname: inventoryDetails.cname,
+              pprice: inventoryDetails.pprice,
+              qty: inventoryDetails.qty,
+              desc: inventoryDetails.desc,
+              details: inventoryDetails.details,
+
+
             },
           }
         )

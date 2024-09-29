@@ -51,9 +51,11 @@ router.post("/add-inventory", function (req, res) {
 router.get("/edit-inventory/:id", verifySignedIn, async function (req, res) {
   let administator = req.session.admin;
   let inventoryId = req.params.id;
+  let categoryId = req.params.id;
   let inventory = await adminHelper.getinventoryDetails(inventoryId);
+  let categories = await adminHelper.getAllcategories(categoryId);
   console.log(inventory);
-  res.render("admin/inventory/edit-inventory", { admin: true, layout: "admin", inventory, administator });
+  res.render("admin/inventory/edit-inventory", { admin: true, layout: "admin", categories, inventory, administator });
 });
 
 ///////EDIT inventory/////////////////////                                         
@@ -102,7 +104,33 @@ router.get("/add-category", verifySignedIn, function (req, res) {
 });
 
 ///////ADD category/////////////////////                                         
-router.post("/add-category", function (req, res) {
+router.post("/add-category", async function (req, res) {
+  const { cname } = req.body;
+  let errors = {};
+
+  // Check if email already exists
+  const existingCategory = await db.get()
+    .collection(collections.CATEGORY_COLLECTION)
+    .findOne({ cname });
+
+  if (existingCategory) {
+    errors.cname = "This category is already exist";
+  }
+
+  if (!cname) errors.cname = "Please enter catgeory name.";
+
+  // If there are any validation errors, re-render the form with error messages
+  if (Object.keys(errors).length > 0) {
+    return res.render("admin/category/add-category", {
+      admin: true,
+      layout: 'admin',
+      errors,
+      cname,
+
+    });
+  }
+
+
   adminHelper.addcategory(req.body, (id) => {
     let image = req.files.Image;
     image.mv("./public/images/category-images/" + id + ".png", (err, done) => {

@@ -46,7 +46,7 @@
 <main id="main" class="main">
 
     <div class="pagetitle">
-        <h1>Add Inventory</h1>
+        <h1>Edit Inventory</h1>
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/admin">Home</a></li>
@@ -63,19 +63,21 @@
                         {{!-- <h5 class="card-title">Multi Columns Form</h5> --}}
 
                         <!-- Multi Columns Form -->
-                        <form action="/admin/add-inventory" enctype="multipart/form-data" method="post"
-                            class="row g-3 mt-1">
+                        <form action="/admin/edit-inventory/{{inventory._id}}" enctype="multipart/form-data"
+                            method="post" class="row g-3 mt-1">
                             <input type="hidden" name="date" id="datetime">
 
                             <div class="col-md-12">
                                 <label for="inputName5" class="form-label">Product Name</label>
-                                <input type="text" class="form-control mb-3" name="pname" id="inputName5" required>
+                                <input type="text" class="form-control mb-3" value="{{inventory.pname}}" name="pname"
+                                    id="inputName5" required>
 
 
 
                                 <label for="inputName5" class="form-label">Product Category</label>
                                 <select class="form-select mb-3" name="pcategory" aria-label="Default select example">
                                     <option selected disabled>Select Category</option>
+                                    <option value={{inventory.cname}} disabled selected>{{inventory.cname}}</option>
                                     {{#each categories}}
                                     <option value={{this.cname}}>{{this.cname}}</option>
 
@@ -83,13 +85,14 @@
                                 </select>
 
                                 <label for="inputName5" class="form-label">Company Name</label>
-                                <input type="text" class="form-control mb-3" name="cname" id="inputName5" required>
+                                <input type="text" class="form-control mb-3" value="{{inventory.cname}}" name="cname"
+                                    id="inputName5" required>
 
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <label for="inputName5" class="form-label">Product Price</label>
-                                        <input type="text" class="form-control mb-3" name="pprice" id="inputName5"
-                                            required>
+                                        <input type="text" class="form-control mb-3" value="{{inventory.pprice}}"
+                                            name="pprice" id="inputName5" required>
                                     </div>
                                     {{!-- <div class="col-lg-3">
                                         <label for="inputName5" class="form-label">Per</label>
@@ -105,16 +108,18 @@
                                     </div> --}}
                                     <div class="col-lg-3">
                                         <label for="inputName5" class="form-label">Stock</label>
-                                        <input type="number" class="form-control mb-3" name="qty" id="inputName5"
-                                            required>
+                                        <input type="number" class="form-control mb-3" value={{inventory.qty}}
+                                            name="qty" id="inputName5" required>
                                     </div>
                                 </div>
+
                                 <label for="inputName5" class="form-label">Description</label>
                                 <textarea type="text" class="form-control mb-3" name="desc" id="inputName5"
-                                    required></textarea>
+                                    required>{{inventory.desc}}</textarea>
                                 <label for="inputName5" class="form-label">Other Details</label>
                                 <textarea type="text" class="form-control mb-3" name="details" id="inputName5"
-                                    required></textarea>
+                                    required>{{inventory.details}}</textarea>
+
 
 
                                 {{!-- <label for="inputName5" class="form-label mt-3">Company Name</label>
@@ -122,8 +127,8 @@
 
 
                                 <div class="mb-4 mt-4" style="float: inline-end;">
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                    <button type="reset" class="btn btn-secondary">Reset</button>
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                    {{!-- <button type="reset" class="btn btn-secondary">Reset</button> --}}
                                     <a href="/admin/all-inventories" class="btn btn-danger">Cancel</a>
 
                                 </div>
