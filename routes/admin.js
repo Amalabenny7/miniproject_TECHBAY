@@ -105,19 +105,22 @@ router.get("/add-category", verifySignedIn, function (req, res) {
 
 ///////ADD category/////////////////////                                         
 router.post("/add-category", async function (req, res) {
-  const { cname } = req.body;
+  let { cname } = req.body;
   let errors = {};
 
-  // Check if email already exists
+  // Normalize cname to lowercase
+  cname = cname.trim().toLowerCase();
+
+  // Check if category already exists (case-insensitive)
   const existingCategory = await db.get()
     .collection(collections.CATEGORY_COLLECTION)
-    .findOne({ cname });
+    .findOne({ cname: { $regex: new RegExp(`^${cname}$`, "i") } });
 
   if (existingCategory) {
-    errors.cname = "This category is already exist";
+    errors.cname = "This category already exists";
   }
 
-  if (!cname) errors.cname = "Please enter catgeory name.";
+  if (!cname) errors.cname = "Please enter a category name.";
 
   // If there are any validation errors, re-render the form with error messages
   if (Object.keys(errors).length > 0) {
@@ -126,11 +129,10 @@ router.post("/add-category", async function (req, res) {
       layout: 'admin',
       errors,
       cname,
-
     });
   }
 
-
+  // Add category to the database
   adminHelper.addcategory(req.body, (id) => {
     let image = req.files.Image;
     image.mv("./public/images/category-images/" + id + ".png", (err, done) => {
@@ -142,6 +144,7 @@ router.post("/add-category", async function (req, res) {
     });
   });
 });
+
 
 ///////EDIT category/////////////////////                                         
 router.get("/edit-category/:id", verifySignedIn, async function (req, res) {
