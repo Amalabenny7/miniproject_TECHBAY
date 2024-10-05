@@ -1,0 +1,113 @@
+<style>
+    .header {
+        --background-color: rgba(0, 0, 0, 0);
+        --default-color: #ffffff;
+        --heading-color: #ffffff;
+        color: var(--default-color);
+        background-color: black;
+        padding: 20px 0;
+        transition: all 0.5s;
+        z-index: 997;
+    }
+</style>
+
+<div class="page-content-wrapper mt-5 py-3"><br><br><br>
+    <div class="container-lg">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card product-details-card mb-3">
+                    <div class="card-body">
+                        <div class="product-gallery-wrapper">
+                            <div class="product-gallery"><a href="/images/product-images/{{product._id}}.png"><img
+                                        class="rounded" src="/images/product-images/{{product._id}}.png" alt=""
+                                        width="100%"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card product-details-card mb-3 direction-rtl">
+                    <div class="card-body">
+                        <h3>{{product.iname}}</h3>
+                        <h5>{{product.pprice}}/-</h5>
+                        <p>{{product.icategory}}</p>
+
+                        <p><b>Available Quantity : </b>
+                            {{product.qty}}
+                        </p>
+                        <p>Description : </p>
+                        <h6>{{product.idesc}}</h6>
+
+
+
+                        <div class="input-group">
+                            {{#if user}}
+                            <button class="btn btn-dark w-100 mt-4" id="add-to-cart-{{product._id}}"
+                                onclick="addToCart('{{product._id}}')">Book
+                                Now</button>
+
+                            {{!-- <button class="btn btn-dark w-100 mt-4" onclick="buyNow('{{product._id}}')">Book
+                                Now</button> --}}
+                            {{else}}
+                            <a href="/signin" class="btn btn-dark w-100 mt-4">Book
+                                Now</a>
+                            {{/if}}
+                        </div>
+                    </div>
+                </div>
+                <div class="card product-details-card mb-3 direction-rtl">
+                    <div class="card-body">
+                        <p>Company : </p>
+                        <h6>{{{product.icname}}}</h6>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<script>
+    function buyNow(productId) {
+        window.location.href = '/place-order/' + productId;
+    }
+
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+    function addToCart(productId) {
+        $.ajax({
+            url: "/add-to-cart/" + productId,
+            method: "get",
+            success: (response) => {
+                if (response.status) {
+                    // Update cart count
+                    let count = $("#cart-count").html();
+                    count = parseInt(count) + 1;
+                    $("#cart-count").html(count);
+
+                    // Change button text and style
+                    let button = $("#add-to-cart-" + productId);
+                    button.html("Added to cart ✅");
+                    button.removeClass("btn-dark").addClass("btn-success");
+                    button.prop("disabled", true); // Optional: Disable the button after adding to cart
+
+                    // Redirect to /cart after adding to cart
+                    window.location.href = "/cart";
+                }
+            },
+            error: (err) => {
+                console.error("Error adding to cart:", err);
+                // You can show an error message here if needed
+            }
+        });
+    }
+</script>

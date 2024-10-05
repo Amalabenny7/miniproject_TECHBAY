@@ -29,11 +29,12 @@
                                         <th>Date</th>
                                         <th>Image</th>
                                         <th>Product Name</th>
+                                        <th>Company Name</th>
                                         <th> Category</th>
                                         <th> MRP</th>
                                         <th> Our Price</th>
                                         <th> Quantiy</th>
-                                        {{!-- <th>Company Name</th> --}}
+                                        <th>Desc</th>
                                         <th>Manage</th>
                                     </tr>
                                 </thead>
@@ -45,11 +46,12 @@
                                         <td><img src="/images/product-images/{{this._id}}.png" alt=""
                                                 style="width: 3rem"></td>
                                         <td>{{this.iname}}</td>
+                                        <td>{{this.icname}}</td>
                                         <td>{{this.icategory}}</td>
                                         <td>{{this.iprice}}/-</td>
                                         <td>{{this.pprice}}/{{this.per}}</td>
                                         <td>{{this.qty}}</td>
-                                        {{!-- <td>{{this.cname}}</td> --}}
+                                        <td>{{this.idesc}}</td>
 
                                         <td>
 

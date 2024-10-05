@@ -22,9 +22,10 @@ router.get("/", async function (req, res, next) {
     let userId = req.session.user._id;
     cartCount = await userHelper.getCartCount(userId);
   }
-  userHelper.getAllProducts().then((products) => {
-    res.render("users/home", { admin: false, products, user, cartCount });
-  });
+
+  let categories = await userHelper.getAllcategories(); // Fetch all categories
+  let products = await userHelper.getAllProducts(); // Fetch all categories
+  res.render("users/home", { admin: false, products, user, cartCount, categories });
 });
 
 router.get("/profile", async function (req, res, next) {
@@ -120,6 +121,19 @@ router.post("/edit-profile/:id", verifySignedIn, async function (req, res) {
 });
 
 
+// Route to render products page based on categoryId
+router.get('/category', async (req, res) => {
+
+  let categories = await userHelper.getAllcategories(); // Fetch all categories
+  let products = await userHelper.getAllProducts(); // Fetch all categories
+  res.render('users/category', {
+    layout: 'layout',
+    admin: false, products, categories
+  }); // Render category.hbs with products
+
+});
+
+
 // GET route to display the change password form
 router.get('/change-password/:id', verifySignedIn, async (req, res) => {
   res.render('users/change-password', {
@@ -183,6 +197,25 @@ router.get("/signup", function (req, res) {
     res.render("users/signup", { admin: false, layout: 'empty' });
   }
 });
+
+router.get("/single-product/:id", async function (req, res) {
+  let user = req.session.user;
+  const productId = req.params.id; // Get product ID from UR
+  let cartCount = null;
+  if (user) {
+    let userId = req.session.user._id;
+    cartCount = await userHelper.getCartCount(userId);
+  }
+
+  try {
+    const product = await userHelper.getProductById(productId); // Pass the product ID to the function
+    res.render("users/single-product", { admin: false, user, cartCount, product });
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
 
 
 // List of common fake or disposable email domains

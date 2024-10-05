@@ -68,6 +68,8 @@
                             <div class="alert alert-danger">{{errorMessage}}</div>
                             {{/if}}
 
+                            {{#if errors.iname}}<div class="text-danger">{{errors.iname}}</div>{{/if}}
+
                             <input type="hidden" name="date" id="datetime">
                             <div class="row mb-3  mt-4">
                                 <div class="col-8 ">
@@ -107,13 +109,21 @@
                                         <label for="qty" class="form-label">Available Stock</label>
                                         <input type="text" class="form-control mb-3" id="qty" name="iqty" readonly>
                                     </div>
-
-
-                                    <input type="hidden" class="form-control mb-3" id="pcategory" name="icategory"
-                                        readonly>
-
-                                    <input type="hidden" class="form-control mb-3" id="cname" name="icname" readonly>
                                 </div>
+
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <label for="qty" class="form-label">Category</label>
+                                        <input type="text" class="form-control mb-3" id="pcategory" name="icategory"
+                                            readonly>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <label for="qty" class="form-label">Company Name</label>
+                                        <input type="text" class="form-control mb-3" id="cname" name="icname" readonly>
+                                    </div>
+                                </div>
+                                <label for="qty" class="form-label">Product Details</label>
+                                <input type="text" class="form-control mb-3" id="desc" name="idesc" readonly>
                             </div>
                             <!-- Rest of your form -->
                             <div class="row">
@@ -195,7 +205,7 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert("An error occurred while submitting the form.");
+                alert("The Product is already exist.");
             });
     });
 </script>
@@ -216,6 +226,8 @@
                 document.getElementById("pprice").value = data.pprice || "N/A";
                 document.getElementById("qty").value = data.qty || "0";
                 document.getElementById("pcategory").value = data.pcategory || "N/A";
+                document.getElementById("cname").value = data.cname || "N/A";
+                document.getElementById("desc").value = data.desc || "N/A";
 
                 document.getElementById("inventoryDetails").style.display = "block";
 

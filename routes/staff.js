@@ -41,7 +41,30 @@ router.get("/add-product", verifySignedIn, async function (req, res) {
 });
 
 router.post("/add-product", async function (req, res) {
-  const { inventory, pprice, per, qty } = req.body;
+  const { iname, inventory, pprice, per, qty } = req.body;
+  let errors = {};
+
+  // Normalize inventory to lowercase
+
+  // Check if category already exists (case-insensitive)
+  const existingIname = await db.get()
+    .collection(collections.PRODUCTS_COLLECTION)
+    .findOne({ iname });
+
+  if (existingIname) {
+    errors.iname = "The product is already exists";
+  }
+
+
+  // If there are any validation errors, re-render the form with error messages
+  if (Object.keys(errors).length > 0) {
+    return res.render("staff/products/add-product", {
+      staff: true,
+      layout: 'admin',
+      errors,
+      iname,
+    });
+  }
 
   try {
     let selectedInventory = await adminHelper.getInventoryById(inventory);

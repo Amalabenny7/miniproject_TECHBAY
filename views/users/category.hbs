@@ -1,0 +1,89 @@
+<style>
+    .header {
+        --background-color: rgba(0, 0, 0, 0);
+        --default-color: #ffffff;
+        --heading-color: #ffffff;
+        color: var(--default-color);
+        background-color: black;
+        padding: 20px 0;
+        transition: all 0.5s;
+        z-index: 997;
+    }
+
+    .btnnnn {
+        cursor: pointer;
+    }
+</style>
+
+<br><br><br><br><br>
+
+{{!-- <div class="container">
+    <div class="row g-3">
+        {{#each categories}}
+        <div class="col-lg-3">
+            <a class="btnnnn" onclick="filterCards('{{this.cname}}')">
+                <div class="card card2 p-4">
+
+                    <div class="">
+                        <h5>{{this.cname}} </h5>
+
+                    </div>
+                </div>
+            </a>
+        </div><!-- End Team Member -->
+        {{/each}}
+    </div>
+</div> --}}
+
+<div class="container">
+    <div class="filter-buttons mb-4">
+        <button class="btn btn-dark" onclick="filterCards('all')">All</button>
+        {{#each categories}}
+        <button class="btn btn-dark" onclick="filterCards('{{this.cname}}')">{{this.cname}}</button>
+        {{/each}}
+    </div>
+
+    <div class="cards-container">
+
+        <div class="row g-3">
+            {{#each products}}
+            <div class="col-lg-3">
+                <div class="card card2 p-4" data-category="{{this.icategory}}">
+                    <div class="pic mb-4"><img src="/images/product-images/{{this._id}}.png" class="img-fluid" alt="">
+                    </div>
+                    <div class="">
+                        <h5>{{this.iname}} </h5>
+                        <h6>₹{{this.pprice}}/-</h6>
+                        <p class="">Available Stock : {{this.qty}}</p>
+                        {{!-- <button id="add-to-cart-{{this._id}}" onclick="addToCart('{{this._id}}')"
+                            class="btn btn-sm btn-dark">Add
+                            to cart</button> --}}
+                        <a href="/single-product/{{this._id}}" class="btn btn-dark">View More</a>
+                    </div>
+                </div>
+            </div><!-- End Team Member -->
+            {{/each}}
+
+
+
+        </div>
+
+    </div>
+
+</div>
+<script>
+    function filterCards(category) {
+        // Select all cards
+        const cards = document.querySelectorAll('.card2');
+
+        // Loop through all cards and filter based on category
+        cards.forEach(card => {
+            // If 'all' is selected, show all cards, otherwise filter by category
+            if (category === 'all' || card.getAttribute('data-category') === category) {
+                card.style.display = 'inline-block';  // Show the card
+            } else {
+                card.style.display = 'none';  // Hide the card
+            }
+        });
+    }
+</script>

@@ -410,6 +410,7 @@ router.get("/add-product", verifySignedIn, function (req, res) {
 });
 
 router.post("/add-product", function (req, res) {
+
   adminHelper.addProduct(req.body, (id) => {
     let image = req.files.Image;
     image.mv("./public/images/product-images/" + id + ".png", (err, done) => {

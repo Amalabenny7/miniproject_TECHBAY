@@ -10,6 +10,52 @@ var instance = new Razorpay({
 });
 
 module.exports = {
+
+
+  getAllcategories: async () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let categories = await db
+          .get()
+          .collection(collections.CATEGORY_COLLECTION)
+          .find()
+          .toArray();
+        resolve(categories);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+
+  getAllProductsByCategory: async (categoryId) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let products = await db
+          .get()
+          .collection(collections.PRODUCTS_COLLECTION)
+          .find({ icategory: objectId(categoryId) }) // Use ObjectId to filter by category id
+          .toArray();
+        resolve(products);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+
+  getProductById: (productId) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const product = await db.get()
+          .collection(collections.PRODUCTS_COLLECTION)
+          .findOne({ _id: objectId(productId) });
+        resolve(product);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+
+
   getAllProducts: () => {
     return new Promise(async (resolve, reject) => {
       let products = await db
