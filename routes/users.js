@@ -433,7 +433,7 @@ router.post("/reset-password", async (req, res) => {
 
     // Clear the session and redirect to the login page
     req.session.resetUserId = null;
-    res.redirect("/login");
+    res.redirect("/signin");
   } catch (err) {
     console.error("Error updating password:", err);
     res.status(500).send("An error occurred while updating the password.");

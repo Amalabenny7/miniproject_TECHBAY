@@ -44,10 +44,18 @@
                         <td>{{this.orderObject.paymentMethod}}</td>
                         <td>{{this.orderObject.status}}</td>
                         <td>
+                            {{#if (isNotIn this.orderObject.status "shipped, delivering, delivered")}}
                             <a href="/cancel-order/{{this._id}}"
-                                onclick="return confirm('Are You Sure to Cancel This Order ?')"
-                                class="btn btn-danger">Cancel</a>
+                                onclick="return confirm('Are You Sure to Cancel This Order?')"
+                                class="btn btn-danger cancel-button">
+                                Cancel
+                            </a>
+                            {{else}}
+                            <span class="text-muted">Can't cancel the product</span>
+                            <!-- Optional: Show some text if canceled -->
+                            {{/if}}
                         </td>
+
                         <td>
                             <a href="/view-ordered-products/{{this._id}}" class="btn btn-primary">View Product</a>
                         </td>

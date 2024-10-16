@@ -15,7 +15,7 @@ var app = express();
 const flash = require('connect-flash');
 
 
-// view engine setup
+// View engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
 
@@ -24,34 +24,39 @@ app.engine(
   hbs({
     extname: "hbs",
     defaultLayout: "layout",
-    layoutsDir: __dirname + "/views/layout/",
-    partialsDir: __dirname + "/views/header-partials/",
+    layoutsDir: path.join(__dirname, "views", "layout"),
+    partialsDir: path.join(__dirname, "views", "header-partials"),
     helpers: {
       incremented: function (index) {
-        index++;
-        return index;
+        return index + 1;
+      },
+      isNotIn: function (value, list) {
+        const values = list.split(',').map(item => item.trim());
+        return !values.includes(value);
       },
     },
   })
 );
+
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(fileUpload());
-app.use(session({ secret: "Key", cookie: { maxAge: 600000 } }))
+app.use(session({ secret: "Key", cookie: { maxAge: 600000 } }));
+
 db.connect((err) => {
   if (err) console.log("Error" + err);
   else console.log("Database Connected Successfully");
 });
+
 app.use("/", usersRouter);
 app.use("/admin", adminRouter);
 app.use("/admin/staff", adminRouter);
 app.use("/admin/inventory", adminRouter);
 app.use("/staff", staffRouter);
 app.use("/staff/products", staffRouter);
-
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -65,7 +70,6 @@ app.use((req, res, next) => {
   res.locals.errorMessage = req.flash('error');
   next();
 });
-
 
 // error handler
 app.use(function (err, req, res, next) {
