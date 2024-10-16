@@ -344,6 +344,106 @@ router.post("/signup", async function (req, res) {
 });
 
 
+// GET request to render the reset password page
+router.get("/forgot-password", (req, res) => {
+  res.render("users/forgot-password", { admin: false, layout: 'empty' });
+});
+
+// POST request to handle the mobile number submission
+router.post("/forgot-password", async (req, res) => {
+  const { Phone } = req.body;
+  let errors = {};
+
+  // Validate mobile number
+  if (!Phone) {
+    errors.phone = "Please enter your phone number.";
+  } else if (!/^[6-9]\d{9}$/.test(Phone) && !/^0\d{9}$/.test(Phone)) {
+    errors.phone = "Phone number must start with 0 or a digit from 6 to 9 and be exactly 10 digits.";
+  }
+
+  // If there are errors, re-render the page with the error
+  if (Object.keys(errors).length > 0) {
+    return res.render("users/forgot-password", { admin: false, layout: 'empty', errors });
+  }
+
+  // Find the user by phone number
+  const user = await db.get().collection(collections.USERS_COLLECTION).findOne({ Phone });
+
+  if (!user) {
+    errors.phone = "Phone number is not registered.";
+    return res.render("users/forgot-password", { admin: false, layout: 'empty', errors });
+  }
+
+  // Store user ID in session and redirect to the reset password page
+  req.session.resetUserId = user._id;
+  res.redirect("/reset-password");
+});
+
+// GET request to render the password reset page
+router.get("/reset-password", (req, res) => {
+  if (!req.session.resetUserId) {
+    return res.redirect("/forgot-password");
+  }
+
+  res.render("users/reset-password", { admin: false, layout: 'empty' });
+});
+
+// POST request to update the password
+router.post("/reset-password", async (req, res) => {
+  const { Password, Repassword } = req.body;
+  let errors = {};
+
+  // Password validation
+  if (!Password) {
+    errors.password = "Please enter a new password.";
+  } else {
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/;
+    if (!strongPasswordRegex.test(Password)) {
+      errors.password = "Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.";
+    }
+  }
+
+  // Check if Password and Repassword match
+  if (Password !== Repassword) {
+    errors.repassword = "Passwords do not match.";
+  }
+
+  // If there are errors, re-render the page with error messages
+  if (Object.keys(errors).length > 0) {
+    return res.render("users/reset-password", { admin: false, layout: 'empty', errors });
+  }
+
+  // Hash the new password
+  const hashedPassword = await bcrypt.hash(Password, 10);
+  console.log("Hashed Password:", hashedPassword); // Log hashed password
+
+  // Update the user's password in the database
+  try {
+    const result = await db.get()
+      .collection(collections.USERS_COLLECTION)
+      .updateOne(
+        { _id: ObjectId(req.session.resetUserId) },
+        { $set: { Password: hashedPassword } }
+      );
+    console.log("Update result:", result); // Log the result of the update query
+
+    if (result.matchedCount === 0) {
+      return res.status(404).send("User not found");
+    }
+
+    // Clear the session and redirect to the login page
+    req.session.resetUserId = null;
+    res.redirect("/login");
+  } catch (err) {
+    console.error("Error updating password:", err);
+    res.status(500).send("An error occurred while updating the password.");
+  }
+});
+
+
+
+
+
 router.get("/signin", function (req, res) {
   if (req.session.signedIn) {
     res.redirect("/");
