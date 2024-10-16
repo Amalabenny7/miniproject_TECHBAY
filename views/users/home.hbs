@@ -57,6 +57,11 @@
       </div>
 
       <div class="row g-3">
+
+
+
+        {{#if user}}
+
         {{#each products}}
         <div class="col-lg-3">
           <div class="card p-4">
@@ -67,13 +72,31 @@
               <p class="">Available Stock : {{this.qty}}</p>
               <button id="add-to-cart-{{this._id}}" onclick="addToCart('{{this._id}}')" class="btn btn-sm btn-dark">Add
                 to cart</button>
+
               <a href="/single-product/{{this._id}}" class="btn btn-outlined">View More</a>
             </div>
           </div>
         </div><!-- End Team Member -->
         {{/each}}
+        {{else}}
 
+        {{#each products}}
+        <div class="col-lg-3">
+          <div class="card p-4">
+            <div class="pic mb-4"><img src="/images/product-images/{{this._id}}.png" class="img-fluid" alt=""></div>
+            <div class="">
+              <h5>{{this.iname}} </h5>
+              <h6>₹{{this.pprice}}/-</h6>
+              <p class="">Available Stock : {{this.qty}}</p>
+              <a href="/signin" class="btn btn-sm btn-dark">Add
+                to cart</a>
 
+              <a href="/single-product/{{this._id}}" class="btn btn-outlined">View More</a>
+            </div>
+          </div>
+        </div><!-- End Team Member -->
+        {{/each}}
+        {{/if}}
 
       </div>
 
