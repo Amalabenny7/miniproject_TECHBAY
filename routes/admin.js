@@ -491,6 +491,7 @@ router.get("/all-orders", verifySignedIn, async function (req, res) {
   let orders = await adminHelper.getAllOrders();
   res.render("admin/all-orders", {
     admin: true,
+    layout: "admin",
     administator,
     orders,
   });
@@ -506,6 +507,7 @@ router.get(
     res.render("admin/order-products", {
       admin: true,
       administator,
+      layout: "admin",
       products,
     });
   }

@@ -28,10 +28,36 @@ router.get("/", async function (req, res, next) {
   res.render("users/home", { admin: false, products, user, cartCount, categories });
 });
 
+
+///////ALL report/////////////////////                                         
+router.get("/reports", verifySignedIn, function (req, res) {
+  let user = req.session.user;
+  userHelper.getAllreports().then((reports) => {
+    res.render("users/reports", { admin: false, reports, user });
+  });
+});
+
+///////ADD report/////////////////////                                         
+router.get("/add-report", verifySignedIn, function (req, res) {
+  let user = req.session.user;
+  res.render("users/add-report", { admin: false, user });
+});
+
+///////ADD report/////////////////////                                         
+router.post("/add-report", function (req, res) {
+  userHelper.addreport(req.body, (id) => {
+    res.redirect("/reports");
+  });
+});
+
+
+
+
 router.get("/profile", async function (req, res, next) {
   let user = req.session.user;
   res.render("users/profile", { admin: false, user });
 });
+
 
 router.get("/edit-profile/:id", verifySignedIn, async function (req, res) {
   let user = req.session.user;

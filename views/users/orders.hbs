@@ -1,17 +1,31 @@
+<style>
+    .header {
+        --background-color: rgba(0, 0, 0, 0);
+        --default-color: #ffffff;
+        --heading-color: #ffffff;
+        color: var(--default-color);
+        background-color: black;
+        padding: 20px 0;
+        transition: all 0.5s;
+        z-index: 997;
+    }
+</style>
+
 <section>
     {{#if orders}}
     <div class="container my-5">
+        <h4 class="mb-3">My Orders</h4>
         <div class="table-responsive">
-            <table class="table" id="table">
+            <table class="table table-bordered" id="table">
                 <thead class="table-dark">
                     <tr class="align-middle">
-                        <th scope="col">Date</th>
-                        <th scope="col">Address</th>
-                        <th scope="col">Pincode</th>
-                        <th scope="col">Mobile</th>
+                        <th scope="col">No.</th>
+                        <th scope="col">Delivery Address</th>
+                        {{!-- <th scope="col">Pincode</th>
+                        <th scope="col">Mobile</th> --}}
                         <th scope="col">Amount</th>
                         <th scope="col">Payment</th>
-                        <th scope="col">Status</th>
+                        <th scope="col">Delivery Status</th>
                         <th scope="col">Cancel</th>
                         <th scope="col">View</th>
                     </tr>
@@ -20,11 +34,13 @@
                 <tbody>
                     {{#each orders}}
                     <tr class="align-middle">
-                        <td>{{this.orderObject.date}}</td>
-                        <td>{{this.orderObject.deliveryDetails.address}}</td>
-                        <td>{{this.orderObject.deliveryDetails.pincode}}</td>
-                        <td>{{this.orderObject.deliveryDetails.mobile}}</td>
-                        <td>{{this.orderObject.totalAmount}}</td>
+                        <th scope="row">{{incremented @index}}</th>
+
+                        {{!-- <td>{{this.orderObject.date}}</td> --}}
+                        <td>{{this.orderObject.deliveryDetails.Address}}</td>
+                        {{!-- <td>{{this.orderObject.deliveryDetails.pincode}}</td>
+                        <td>{{this.orderObject.deliveryDetails.mobile}}</td> --}}
+                        <td>{{this.orderObject.totalAmount}}/-</td>
                         <td>{{this.orderObject.paymentMethod}}</td>
                         <td>{{this.orderObject.status}}</td>
                         <td>

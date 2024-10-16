@@ -404,8 +404,9 @@ router.get("/all-orders", verifySignedIn, async function (req, res) {
   let staff = req.session.staff;
   let orders = await staffHelper.getAllOrders();
   res.render("staff/all-orders", {
-    staff: true, layout: "admin",
-    workspace,
+    staff: true,
+    layout: "admin",
+    staff,
     orders,
   });
 });
@@ -419,8 +420,8 @@ router.get(
     let products = await userHelper.getOrderProducts(orderId);
     res.render("staff/order-products", {
       staff: true, layout: "admin",
-      workspace,
       products,
+      staff
     });
   }
 );

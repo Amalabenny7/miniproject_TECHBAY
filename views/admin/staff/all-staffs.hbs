@@ -48,8 +48,16 @@
                                             <div class="d-flex gap-2">
                                                 {{#if this.approved}}
                                                 <span class="badge bg-success p-2">Approved</span>
+                                                <button class="btn btn-danger btn-sm"
+                                                    onclick="handleRejection('{{this._id}}', '{{this.Staffname}}', '{{this.Phone}}')">
+                                                    <i class="bi bi-ban"></i>
+                                                </button>
                                                 {{else if this.rejected}}
                                                 <span class="badge bg-danger p-2">Rejected</span>
+                                                <button class="btn btn-success btn-sm"
+                                                    onclick="handleApproval('{{this._id}}', '{{this.Staffname}}', '{{this.Phone}}')">
+                                                    <i class="bi bi-check2"></i>
+                                                </button>
                                                 {{else}}
                                                 <!-- Approve Button -->
                                                 <button class="btn btn-success btn-sm"
@@ -63,11 +71,11 @@
                                                     <i class="bi bi-ban"></i>
                                                 </button>
                                                 {{/if}}
-                                                <form action="/admin/delete-staff/{{this._id}}" method="POST">
+                                                {{!-- <form action="/admin/delete-staff/{{this._id}}" method="POST">
                                                     <button type="submit" class="btn btn-danger btn-sm">
                                                         <i class="bi bi-trash"></i>
                                                     </button>
-                                                </form>
+                                                </form> --}}
                                             </div>
                                         </td>
                                     </tr>

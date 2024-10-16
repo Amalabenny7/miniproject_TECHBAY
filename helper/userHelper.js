@@ -12,6 +12,99 @@ var instance = new Razorpay({
 module.exports = {
 
 
+  ///////ADD report/////////////////////                                         
+  addreport: (report, callback) => {
+    console.log(report);
+    report.Price = parseInt(report.Price);
+    db.get()
+      .collection(collections.REPORT_COLLECTION)
+      .insertOne(report)
+      .then((data) => {
+        console.log(data);
+        callback(data.ops[0]._id);
+      });
+  },
+
+  ///////GET ALL report/////////////////////                                            
+  getAllreports: () => {
+    return new Promise(async (resolve, reject) => {
+      let reports = await db
+        .get()
+        .collection(collections.REPORT_COLLECTION)
+        .find()
+        .toArray();
+      resolve(reports);
+    });
+  },
+
+  ///////ADD report DETAILS/////////////////////                                            
+  getreportDetails: (reportId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.REPORT_COLLECTION)
+        .findOne({
+          _id: objectId(reportId)
+        })
+        .then((response) => {
+          resolve(response);
+        });
+    });
+  },
+
+  ///////DELETE report/////////////////////                                            
+  deletereport: (reportId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.REPORT_COLLECTION)
+        .removeOne({
+          _id: objectId(reportId)
+        })
+        .then((response) => {
+          console.log(response);
+          resolve(response);
+        });
+    });
+  },
+
+  ///////UPDATE report/////////////////////                                            
+  updatereport: (reportId, reportDetails) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.REPORT_COLLECTION)
+        .updateOne(
+          {
+            _id: objectId(reportId)
+          },
+          {
+            $set: {
+              Name: reportDetails.Name,
+              Category: reportDetails.Category,
+              Price: reportDetails.Price,
+              Description: reportDetails.Description,
+            },
+          }
+        )
+        .then((response) => {
+          resolve();
+        });
+    });
+  },
+
+
+  ///////DELETE ALL report/////////////////////                                            
+  deleteAllreports: () => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.REPORT_COLLECTION)
+        .remove({})
+        .then(() => {
+          resolve();
+        });
+    });
+  },
+
+
+
   getAllcategories: async () => {
     return new Promise(async (resolve, reject) => {
       try {

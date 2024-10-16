@@ -1,5 +1,19 @@
+<style>
+    .header {
+        --background-color: rgba(0, 0, 0, 0);
+        --default-color: #ffffff;
+        --heading-color: #ffffff;
+        color: var(--default-color);
+        background-color: black;
+        padding: 20px 0;
+        transition: all 0.5s;
+        z-index: 997;
+    }
+</style>
+
 <section>
     <div class="container mt-2">
+        <a href="/orders" class="btn btn-dark btn-sm mt-5">Back</a>
         <div class="row mt-5">
             {{#each products}}
             <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 mb-5">
@@ -10,20 +24,24 @@
                     <div class="card-body pb-1">
                         <div class="" style="display: flex; justify-content: end;">
                             <div class="" style="margin-right: auto;">
-                                <h5 class="card-title">{{this.product.Name}}</h5>
+                                <h5 class="card-title">{{this.product.iname}}</h5>
+                                <p class="card-text"><small>₹{{this.product.iprice}}/-</small></p>
+
                             </div>
+
                             <div class="">
-                                <p class="card-text"><small>₹{{this.product.Price}}</small></p>
                             </div>
                         </div>
+                        <br>
                         <div class="" style="margin-right: auto;">
-                            <h6 class="card-title">Quantity: <span class="badge bg-primary">{{this.quantity}}</span></h6>
+                            <h6 class="card-title">Quantity: <span class="badge bg-primary">{{this.quantity}}</span>
+                            </h6>
                         </div>
                         <p class="card-text">{{this.product.Description}}</p>
-                        <div class="row">
+                        {{!-- <div class="row">
                             <button onclick="cancelProduct('{{this._id}}')" class="btn btn-danger">
                                 Cancel Product</button>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>
